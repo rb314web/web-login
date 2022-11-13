@@ -1,0 +1,63 @@
+@import '../assets/colors.scss';
+
+.login {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	background-color: #FF3CAC;
+	background-image: var(--loginBacgroundColor);
+	
+
+	&_loginbox {
+		width: 400px;
+		height: 600px;
+		background-color: #fff;
+		border-radius: 8px;
+
+		form {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			height: 100%;
+		}
+
+		h2 {
+			font-size: 40px;
+		}
+
+		input {
+			width: 200px;
+			height: 30px;
+			margin: 15px;
+			border: none;
+			border-radius: 3px;
+			padding: 5px;
+			border-bottom: 1px solid black;
+			// background-color: rgb(226, 226, 226);
+		}
+
+		input[type='submit'] {
+			height: 50px;
+			background-color: royalblue;
+			color: white;
+			padding: 10px;
+			font-size: 20px;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		&_error {
+			visibility: hidden;
+			color: red;
+			font-size: 18px;
+            transition: visibility 2s;
+		}
+
+		a {
+			color: black;
+			border-bottom: 1px solid #000;
+		}
+	}
+}
