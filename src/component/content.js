@@ -11,6 +11,7 @@ const Content = (props) => {
                 color: 'white',
                 fontSize: '30px'
             }}> Witaj {props.user.username}! To jest treść widoczna po zalogowaniu się 😊</p>
+
             <button onClick={() => props.logout()}>Wyloguj</button>
         </div>
         </>

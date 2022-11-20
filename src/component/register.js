@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 
-import userData from './userData';
+import Message from './message.js'
+
+import Popup from './popup'
 
 import './register.scss';
 
 function Register() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
+	const [repeatPassword, setRepeatPassword] = useState('');
 	const [email, setEmail] = useState('');
 
 	useEffect(() => {
@@ -14,7 +17,11 @@ function Register() {
 	}, [username]);
 	useEffect(() => {
 		checkForm('password');
+		checkForm('repeatPassword');
 	}, [password]);
+	useEffect(() => {
+		checkForm('repeatPassword');
+	}, [repeatPassword]);
 	useEffect(() => {
 		checkForm('email');
 	}, [email]);
@@ -24,6 +31,8 @@ function Register() {
 			/^([a-zA-Z0-9_.AaĄąBbCcĆćDdEeĘęFfGgHhIiJjKkLlŁłMmNnŃńOoÓóPpRrSsŚśTtUuWwYyZzŹźŻż]+){3}$/;
 		const patternPassword =
 			/^(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[#?!@$%^&*\-_]).{8,}$/;
+		const repeatPatternPassword =
+			password === repeatPassword && password !== '';
 		const patternEmail =
 			/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -31,28 +40,42 @@ function Register() {
 			return patternEmail.test(itemValidation);
 		} else if (type === 'password') {
 			return patternPassword.test(itemValidation);
+		} else if (type === 'repeatPassword') {
+			return repeatPatternPassword;
 		} else if (type === 'username') {
 			return patternUsername.test(itemValidation);
 		} else if (type === 'all') {
-			return patternEmail.test(email) && patternPassword.test(password) && patternUsername.test(username)
+			return (
+				patternEmail.test(email) &&
+				patternPassword.test(password) &&
+				patternUsername.test(username) &&
+				repeatPatternPassword
+			);
 		}
 	};
 
 	const checkForm = (type) => {
-		const usernameText = document.querySelector('.username');
-		const passwordText = document.querySelector('.password');
-		const emailText = document.querySelector('.email');
+		const usernameText = document.querySelector('input:nth-child(2)');
+		const passwordText = document.querySelector('input:nth-child(4)');
+		const repeatPasswordText = document.querySelector('input:nth-child(6)');
+		const emailText = document.querySelector('input:nth-child(8)');
 
 		if (type === 'username') {
-			usernameText.style.color = `${
-				validation(username, 'username') ? 'green' : 'red'
+			usernameText.style.outline = `${
+				validation(username, 'username') ? '1px solid green' : 'none'
 			}`;
 		} else if (type === 'password') {
-			passwordText.style.color = `${
-				validation(password, 'password') ? 'green' : 'red'
+			passwordText.style.outline = `${
+				validation(password, 'password') ? '1px solid green' : 'none'
+			}`;
+		} else if (type === 'repeatPassword') {
+			repeatPasswordText.style.outline = `${
+				validation(null, 'repeatPassword') ? '1px solid green' : 'none'
 			}`;
 		} else if (type === 'email') {
-			emailText.style.color = `${validation(email, 'email') ? 'green' : 'red'}`;
+			emailText.style.outline = `${
+				validation(email, 'email') ? '1px solid green' : 'none'
+			}`;
 		}
 	};
 
@@ -62,54 +85,79 @@ function Register() {
 		const registrationTime = new Date();
 
 		const user = {
-			username,
 			email,
 			password,
-			registrationTime: registrationTime,
+			userinfo: {
+				username,
+				registrationTime,
+			}
 		};
+		
+		fetch('/checkEmail', {
+			method: 'POST',
+			body: email,
+		})
+			.then((res) => res.json())
+			.then((data) => data ? document.querySelector('.modal').style.display = 'block' : pushUser(user));
 
-		if (validation(null,'all')) {
-			userData.push(user);
-			setUsername('')
-			setEmail('')
-			setPassword('')
-		}
-		console.log(userData);
 	};
+
+	const pushUser = (props) => {
+		if (validation(null, 'all')) {
+			fetch('/add', {
+				method: 'POST',
+				headers: {},
+				body: JSON.stringify(props),
+			});
+
+			document.querySelector('.test').classList.add('active')
+			setUsername('')
+			setPassword('')
+			setRepeatPassword('')
+			setEmail('')
+			// navigate('/login');
+		}
+	}
 
 	return (
 		<div className='register'>
-		<div className='register_box'>
-			<form onSubmit={addUser}>
-				<h2>Zarejestruj się!</h2>
-				<input
-				placeholder='Imię'
-					onChange={(e) => {
-						setUsername(e.target.value);
-					}}
-					value={username}></input>
-				<p className='username'>Wiecej niż 4 znaki, bez znaków specjalnych</p>
-				<input
-				placeholder='Hasło'
-					type='password'
-					onChange={(e) => {
-						setPassword(e.target.value);
-					}}
-					value={password}></input>
-				<p className='password'>
-					Znak specjalny, duża i mała litera, cyfra, minimum 8 znaków{' '}
-				</p>
-				<input
-				placeholder='E-mail'
-					type='email'
-					onChange={(e) => {
-						setEmail(e.target.value);
-					}}
-					value={email}></input>
-				<p className='email'>No wpisz prawidłowy email</p>
-				<input type='submit' ></input>
-			</form>
-		</div>
+			<div className='register_box'>
+				<form onSubmit={addUser}>
+					<h2>Zarejestruj się!</h2>
+					<div className='inputs'>
+						<span>Imię</span>
+						<input
+							onChange={(e) => {
+								setUsername(e.target.value);
+							}}
+							value={username}></input>
+						<span>Hasło</span>
+						<input
+							type='password'
+							onChange={(e) => {
+								setPassword(e.target.value);
+							}}
+							value={password}></input>
+						<span>Powtórz hasło</span>
+						<input
+							type='password'
+							onChange={(e) => {
+								setRepeatPassword(e.target.value);
+							}}
+							value={repeatPassword}></input>
+						<span>E-mail</span>
+						<input
+							type='email'
+							onChange={(e) => {
+								setEmail(e.target.value);
+							}}
+							value={email}></input>
+					</div>
+					<input type='submit'></input>
+				</form>
+				<div className='modal'><Message content='Email już istnieje'/></div>
+			</div>
+			<Popup text='Rejestracja udana, zaloguj się.'/>
 		</div>
 	);
 }

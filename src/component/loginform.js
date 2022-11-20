@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
-import userData from './userData'
+import Popup from './popup'
 
 import './loginform.scss';
 
@@ -13,43 +13,53 @@ const LoginForm = (props) => {
 	const checkLogin = (e) => {
 		e.preventDefault();
 
-		const index = userData.findIndex( x => x.email === inputEmail)
-
-		if (index != -1 && userData[index].password === inputPassword) {
-			console.log('ok');
-			props.login(userData[index]);
-		} else {
-			setInputEmail('');
-			setInputPassword('');
-			document.querySelector('.login_loginbox_error').style.visibility = 'visible';
-			setTimeout(() => {(document.querySelector('.login_loginbox_error').style.visibility = 'hidden')},3000)
+		if (inputEmail !== '' && inputPassword !== '') {
+			fetch('/checkLogin', {
+				method: 'POST',
+				body: JSON.stringify({
+					inputEmail,
+					inputPassword,
+				})
+			}).then(res => res.json()).then(data => data ? props.login(data) : incorrectLogin())
 		}
 
+		const incorrectLogin = () => {
+			setInputEmail('')
+			setInputPassword('') 
+			document.querySelector('.test').classList.add('active')
+			setTimeout(() => {document.querySelector('.test').classList.remove('active')}, 5000)
+		}
 
+		
 	};
 
 	return (
 		<div className='login'>
-		<div className='login_loginbox'>
-			<form onSubmit={checkLogin}>
-				<h2>Zaloguj się!</h2>
-				<input
-				placeholder='E-mail'
-					onChange={(e) => setInputEmail(e.target.value)}
-					value={inputEmail}></input>
-				<input
-				placeholder='Hasło'
-					type='password'
-					value={inputPassword}
-					onChange={(e) => setInputPassword(e.target.value)}></input>
-				<p className='login_loginbox_error'>Zły login lub hasło!</p>
-				<input type='submit' value='Zaloguj' />
-				<div style={{textAlign:'center'}}>
-                <p>Nie masz jeszcze konta?</p>
-				<p><Link to='/register'>Zarejestruj się</Link></p>
-                </div>
-			</form>
-		</div>
+			<div className='login_loginbox'>
+				<form onSubmit={checkLogin}>
+					<h2>Zaloguj się!</h2>
+					<div className='input'>
+					<span>E-mail</span>
+						<input
+							onChange={(e) => setInputEmail(e.target.value)}
+							value={inputEmail}></input>
+						<span>Hasło</span>
+						<input
+							type='password'
+							value={inputPassword}
+							onChange={(e) => setInputPassword(e.target.value)}></input>
+					</div>
+					<p className='login_loginbox_error'>Zły login lub hasło!</p>
+					<input type='submit' value='Zaloguj' />
+					<div style={{ textAlign: 'center' }}>
+						<p>Nie masz jeszcze konta?</p>
+						<p>
+							<Link to='/register'>Zarejestruj się</Link>
+						</p>
+					</div>
+				</form>
+				<Popup text='Zły login lub hasło!'/>
+			</div>
 		</div>
 	);
 };

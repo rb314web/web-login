@@ -3,13 +3,14 @@
 	justify-content: center;
 	align-items: center;
 	height: 100vh;
-	width: 100vw;
 	background-image: var(--loginBacgroundColor);
+	background-position: center;
+	background-size: cover;
 
 	&_box {
-		height: 680px;
-		width: 470px;
-		background-color: #fff;
+		height: 600px;
+		width: 400px;
+		background-color: #f9f8fb;
 		border-radius: 8px;
 
 		form {
@@ -18,10 +19,9 @@
 			align-items: center;
 			justify-content: center;
 			height: 100%;
-			padding: 0 120px;
 
 			h2 {
-				font-size: 2rem;
+				font-size: 40px;
 			}
 
 			p {
@@ -31,15 +31,18 @@
 			input {
 				width: 250px;
 				height: 30px;
-				margin: 5px;
+				font-size: 18px;
+				margin-bottom: 20px;
 				border: none;
-				border-radius: 3px;
 				padding: 5px;
-				border-bottom: 1px solid #000;
+				padding-left: 20px;
+				border-radius: 5px;
+				box-shadow: 0px 0px 31px -14px rgb(141 144 175);
+				color: #6a6f78;
 				// background-color: rgb(226, 226, 226);
 			}
 
-			input[type='submit']{
+			input[type='submit'] {
 				width: 200px;
 				height: 50px;
 				font-size: 20px;
@@ -49,6 +52,25 @@
 				border-radius: 5px;
 				cursor: pointer;
 			}
+
+			input:focus-visible {
+				outline: none;
+			}
+
+
 		}
 	}
+}
+
+.email {
+	color: black;
+}
+
+.inputs {
+	display: flex;
+	flex-direction: column;
+}
+
+.modal {
+	display: none;
 }

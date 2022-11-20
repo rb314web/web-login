@@ -1,26 +1,24 @@
-const userData = [
+export const users = [
 	{
 		email: 'admin',
 		password: 'admin',
 		userinfo: {
-			username: 'Marcin',
-		},
+            username: 'Marcin',
+        }
 	},
 
 	{
 		email: 'jakiślogin2',
 		password: 'jakieśhasło2',
 		userinfo: {
-			username: 'Tomasz',
-		},
+            username: 'Tomasz',
+        }
 	},
 	{
 		email: 'test@test.pl',
 		password: 'admin',
 		userinfo: {
-			username: 'Wiesław',
-		},
+            username: 'Wiesław',
+        }
 	},
 ];
-
-export default userData;

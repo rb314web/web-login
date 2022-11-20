@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import LoginForm from './component/loginform';
 import Content from './component/content';
 import Register from './component/register';
@@ -40,14 +40,15 @@ function App() {
 		<>
 		<Navigation userLogin={userLogin} logout={logout}/>
 			<Routes>
+				{userLogin ? 
+				<Route path='/' element={<Content user={activeUser} logout={logout} />} />
+				: <Route path='/' element={<AfterLoginContent />} />}
+
+
 				<Route path='/login' element={<LoginForm login={login} />} />
 				<Route path='/register' element={<Register />} />
 			</Routes>
-			{userLogin ? (
-				<Content user={activeUser} logout={logout} />
-			) : (
-				<AfterLoginContent />
-			)}
+			
 		</>
 	);
 }
